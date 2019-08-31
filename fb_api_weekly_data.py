@@ -78,6 +78,7 @@ def find(lst, key, value):
     for i, dic in enumerate(lst):
         if dic[key] == value:
             return i
+    # value not found:
     return -1
 
 def extract_col(row, value):
@@ -89,6 +90,10 @@ def extract_col(row, value):
         return 0
     else:
         index = find(lst=row, key='action_type', value=value)
+        # index will return -1 if it cannot find the value
+        # in the dictionary
+        if index == -1:
+            return 0
         return row[index]['value']
 
 # example data manipulation
@@ -101,9 +106,6 @@ df['registrations_completed'] = df['actions'].apply(extract_col, value='app_cust
 df['registrations_completed'] = pd.to_numeric(df['registrations_completed'])
 df['cost_per_registration'] = df['spend'] / df['registrations_completed']
 
-# fix next two lines
-df.loc[~np.isfinite(df['cost_per_registration']), 'cost_per_registration'] = df['spend']
-df.loc[~np.isfinite(df['cost_per_install']), 'cost_per_install'] = df['spend']
 
 # drop actions column
 df = df.drop(columns=['actions'])
